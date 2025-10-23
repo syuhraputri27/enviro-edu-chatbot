@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot UI</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+    <div class="upgrade-tab">
+        <i class="fa-solid fa-star"></i> Upgrade to Pro
+    </div>
+
+    <nav class="sidebar">
+        
+        <div class="sidebar-header">
+            <a href="#" class="new-chat-btn" role="button">
+                <i class="fa-solid fa-plus"></i> New chat
+            </a>
+            <button class="search-btn">
+                <i class="fa-solid fa-search"></i>
+            </button>
+        </div>
+
+        <div class="chat-history">
+            <div class="history-header">
+                <h3>Your conversations</h3>
+                <a href="#" class="clear-all">Clear All</a>
+            </div>
+            <ul id="history-list">
+                </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <ul>
+                <li><i class="fa-solid fa-cog"></i> Settings</li>
+                <li>
+                    <div class="avatar">AN</div> Andrew Neilson
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="chat-area">
+        
+        <header class="chat-header">
+            CHAT A.I+
+        </header>
+
+        <div class="chat-log" id="chat-log-area"> <div class="empty-chat-placeholder">
+                <i class="fa-solid fa-robot"></i>
+                <h2>Hello Name</h2>
+            </div>
+            
+        </div>
+
+        <footer class="chat-input-area">
+            <div class="input-wrapper">
+                <input type="text" id="chat-input" placeholder="What's in your mind...">
+                <button class="send-btn" id="send-button">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </footer>
+
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+/* Reset CSS dasar */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f7f7f8;
+    color: #1f2328;
+    display: flex;
+    height: 100vh;
+    overflow: hidden; /* Mencegah body scroll */
+}
+
+/* --- 1. Sidebar (Kiri) --- */
+.sidebar {
+    width: 260px;
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.new-chat-btn {
+    flex-grow: 1;
+    padding: 12px;
+    background-color: #4a4aef; /* Biru seperti di gambar */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95em;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    text-decoration: none; /* Ditambahkan agar link tidak ada garis bawah */
+}
+
+.new-chat-btn i {
+    margin-right: 8px;
+}
+
+.search-btn {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.chat-history {
+    flex-grow: 1; /* Membuat history mengisi ruang tersisa */
+    overflow-y: auto; /* Scroll jika history penuh */
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 0 8px;
+}
+
+.history-header h3 {
+    font-size: 0.8em;
+    color: #6c757d;
+    font-weight: 600;
+}
+
+.history-header .clear-all {
+    font-size: 0.8em;
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.chat-history ul {
+    list-style: none;
+}
+
+.chat-history li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-history li:hover,
+.chat-history li.active {
+    background-color: #f0f0f0;
+}
+
+.chat-history li i {
+    color: #6c757d;
+}
+
+.sidebar-footer {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 16px;
+}
+
+.sidebar-footer ul {
+    list-style: none;
+}
+
+.sidebar-footer li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.sidebar-footer li:hover {
+    background-color: #f0f0f0;
+}
+
+.sidebar-footer .avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #ddd;
+}
+
+/* --- 2. Chat Area (Kanan) --- */
+.chat-area {
+    flex-grow: 1; /* Mengisi sisa ruang */
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    height: 100vh;
+}
+
+.chat-header {
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 1.1em;
+    font-weight: 600;
+    flex-shrink: 0; /* Mencegah header mengecil */
+}
+
+.chat-log {
+    flex-grow: 1; /* Mengisi ruang tengah */
+    overflow-y: auto; /* Ini adalah area chat yang bisa di-scroll */
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Jarak antar pesan NANTINYA */
+}
+
+/* --- STYLE UNTUK EMPTY STATE --- */
+.empty-chat-placeholder {
+    flex-grow: 1; /* Memastikan placeholder mengisi ruang chat-log */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #aaa;
+}
+
+.empty-chat-placeholder i {
+    font-size: 4em;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.empty-chat-placeholder h2 {
+    font-size: 1.5em;
+    font-weight: 500;
+}
+/* ------------------------------- */
+
+
+/* Styling untuk setiap pesan (Disimpan untuk nanti saat Anda tambahkan chat) */
+.chat-message {
+    display: flex;
+    gap: 16px;
+    max-width: 90%; /* Agar tidak terlalu lebar */
+}
+
+.chat-message .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.chat-message.user .avatar {
+    background-color: #cce5ff;
+}
+
+.chat-message.bot .avatar {
+    background-color: #d1e7dd;
+}
+
+.message-content {
+    padding-top: 8px;
+}
+
+.message-content strong { /* Untuk nama "CHAT A.I+" */
+    display: block;
+    margin-bottom: 4px;
+    font-size: 1.05em;
+}
+
+.message-content p, 
+.message-content ol {
+    line-height: 1.6;
+}
+
+.message-content ol {
+    padding-left: 20px; /* Indentasi untuk ordered list */
+    margin-top: 10px;
+}
+
+.message-content li {
+    margin-bottom: 8px;
+}
+
+/* Area Input di Bawah */
+.chat-input-area {
+    padding: 24px;
+    border-top: 1px solid #e0e0e0;
+    background-color: #fff;
+    flex-shrink: 0; /* Mencegah input area mengecil */
+}
+
+.input-wrapper {
+    display: flex;
+    position: relative;
+    max-width: 900px; /* Batasi lebar input */
+    margin: 0 auto; /* tengahkan */
+}
+
+.chat-input-area input {
+    flex-grow: 1;
+    padding: 16px 50px 16px 20px; /* Beri ruang untuk tombol send */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1em;
+}
+
+.chat-input-area input:focus {
+    outline: none;
+    border-color: #4a4aef;
+    box-shadow: 0 0 0 2px #4a4aef30;
+}
+
+.send-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #4a4aef;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Buat jadi lingkaran */
+    font-size: 1.1em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tab "Upgrade" di sisi kanan */
+.upgrade-tab {
+    position: fixed;
+    top: 50%;
+    right: -60px; /* Atur posisi agar sedikit keluar */
+    transform: translateY(-50%) rotate(-90deg);
+    background-color: #4a4aef;
+    color: white;
+    padding: 10px 20px;
+    font-size: 0.9em;
+    font-weight: bold;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    cursor: pointer;
+    z-index: 10;
+}
