@@ -1,0 +1,12 @@
+# Folder library Python (wajib)
+venv/
+
+# Database ChromaDB lokal (wajib)
+my_chroma_db/
+
+# File rahasia API keys (wajib)
+.env
+
+# Cache Python
+__pycache__/
+*.pyc

@@ -1,0 +1,24 @@
+{
+  "_id": "67f89abf8b4d... (MongoDB ID)",
+  "userId": "anon-uuid-12345-abcde", // Anonymous User ID Anda
+  "createdAt": "2025-10-28T12:00:00Z",
+  "updatedAt": "2025-10-28T12:05:00Z",
+  "title": "Percakapan tentang Air Quality", // (Opsional)
+  "messages": [
+    {
+      "role": "user",
+      "content": "Can you describe about the Air Quality Tester?",
+      "timestamp": "2025-10-28T12:00:00Z"
+    },
+    {
+      "role": "assistant",
+      "content": "Our Air Quality Tester is a compact, lightweight device...",
+      "timestamp": "2025-10-28T12:01:00Z"
+    },
+    {
+      "role": "user",
+      "content": "Does it work with Google Sheets?",
+      "timestamp": "2025-10-28T12:04:00Z"
+    }
+  ]
+}
