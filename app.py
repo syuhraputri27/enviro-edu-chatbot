@@ -10,12 +10,12 @@ from dotenv import load_dotenv
 from bson.objectid import ObjectId
 from datetime import datetime
 
-# --- 1. Muat .env dan Inisialisasi ---
+# --- 1. Load .env and Initialize ---
 load_dotenv()
 app = Flask(__name__)
 CORS(app) 
 
-# --- 2. Inisialisasi Klien (Global) ---
+# --- 2. Client Initialization (Global) ---
 hf_token = os.getenv("HF_TOKEN")
 hf_client = InferenceClient(
     "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -26,20 +26,20 @@ mongo_url = os.getenv("MONGO_URL")
 mongo_client = MongoClient(mongo_url)
 db = mongo_client.get_database("chatbot_db")
 chat_history_collection = db.get_collection("conversations")
-print("✅ Berhasil terkoneksi ke MongoDB Atlas.")
+print("✅ Successfully connected to MongoDB Atlas.")
 
-print("Memuat model embedding (ini mungkin butuh waktu)...")
+print("Loading model embedding (this may take a while)...")
 embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
-print("✅ Model embedding ('all-MiniLM-L6-v2') berhasil dimuat.")
+print("✅ The embedding model (‘all-MiniLM-L6-v2’) has been successfully loaded.")
 
 try:
     chroma_client = HttpClient(host='localhost', port=8000)
     knowledge_collection = chroma_client.get_collection(
         name="website_knowledge"
     )
-    print("✅ Berhasil terkoneksi ke ChromaDB (localhost:8000).")
+    print("✅ Successfully connected to ChromaDB (localhost:8000).")
 except Exception as e:
-    print(f"❌ GAGAL terhubung ke ChromaDB. Pastikan server chroma run... berjalan. Error: {e}")
+    print(f"❌ Failed to connect to ChromaDB. Make sure the chroma run... server is running. Error: {e}")
 
 # --- 3. Endpoint Frontend ---
 # @app.route("/")
@@ -48,20 +48,20 @@ except Exception as e:
 
 @app.route("/")
 def home():
-    """Sajikan landing page (index.html)"""
+    """Display the landing page (index.html)"""
     return render_template("index.html")
 
 @app.route("/chat")
 def chat_page():
-    """Sajikan halaman chat utama (chat.html)"""
+    """Display the main chat page (chat.html)"""
     return render_template("chat.html")
 
-# --- 4. Endpoint API - Ambil SEMUA History (untuk F5) ---
+# --- 4. Endpoint API - Take ALL History (untuk F5) ---
 @app.route("/api/conversations", methods=["GET"])
 def get_conversations():
     user_id = request.args.get("userId")
     if not user_id:
-        return jsonify({"error": "userId dibutuhkan"}), 400
+        return jsonify({"error": "userId is required"}), 400
     
     try:
         convos = list(chat_history_collection.find(
@@ -72,58 +72,58 @@ def get_conversations():
         for convo in convos:
             conversations_list.append({
                 "id": str(convo.get('_id')),
-                "title": convo.get("title", "Obrolan Baru"),
+                "title": convo.get("title", "New Chat"),
                 "messages": convo.get("messages", []),
                 "createdAt": convo.get("createdAt")
             })
         return jsonify(conversations_list)
     except Exception as e:
         print(f"Error di /api/conversations GET: {e}")
-        return jsonify({"error": "Gagal mengambil percakapan"}), 500
+        return jsonify({"error": "Failed to retrieve conversation"}), 500
 
-# --- 5. ENDPOINT API BARU (UNTUK "CLEAR ALL") ---
+# --- 5. NEW API ENDPOINT (FOR “CLEAR ALL”) ---
 @app.route("/api/conversations", methods=["DELETE"])
 def clear_conversations():
     """
-    Menghapus SEMUA percakapan untuk satu userId.
+    Delete ALL conversations for one user ID.
     """
     data = request.json
     user_id = data.get("userId")
     if not user_id:
-        return jsonify({"error": "userId dibutuhkan"}), 400
+        return jsonify({"error": "userId is required"}), 400
 
     try:
-        # Hapus semua dokumen di MongoDB yang cocok dengan userId
+        # Delete all documents in MongoDB that match the userId
         result = chat_history_collection.delete_many({"userId": user_id})
         
-        print(f"Berhasil menghapus {result.deleted_count} percakapan untuk userId {user_id}.")
+        print(f"Successfully deleted {result.deleted_count} conversation for userId {user_id}.")
         return jsonify({
-            "message": "History berhasil dihapus", 
+            "message": "History successfully deleted", 
             "deleted_count": result.deleted_count
         })
 
     except Exception as e:
         print(f"Error di /api/conversations DELETE: {e}")
-        return jsonify({"error": "Gagal menghapus history"}), 500
+        return jsonify({"error": "Failed to delete history"}), 500
 
-# --- 6. Endpoint API Chat (Utama) ---
+# --- 6. Endpoint API Chat (Main) ---
 @app.route("/api/chat", methods = ["POST"])
 def handle_chat():
     try:
         data = request.json
         user_message = data.get("message")
         user_id = data.get("userId")
-        conversation_id = data.get("conversationId") # ID chat yang aktif, bisa null
+        conversation_id = data.get("conversationId") # Active chat ID, can be null
 
         if not user_message or not user_id:
-            return jsonify({"error": "Parameter 'message' dan 'userId' dibutuhkan."}), 400
+            return jsonify({"error": "The 'message' dan 'userId' parameters are required."}), 400
         
         history = []
         user_message_doc = {"role": "user", "content": user_message, "timestamp": datetime.now()}
 
-        # --- 1. (CRUD) Ambil/Buat Percakapan ---
+        # --- 1. (CRUD) Retrieve/Create Conversation ---
         if conversation_id:
-            # Ini adalah obrolan yang sudah ada
+            # This is an existing chat
             current_convo = chat_history_collection.find_one({
                 "_id": ObjectId(conversation_id),
                 "userId": user_id
@@ -131,18 +131,17 @@ def handle_chat():
             if current_convo:
                 history = current_convo.get("messages", [])[-6:]
         
-        # --- 2. (RAG) - Lakukan RAG (Sama seperti sebelumnya) ---
-        print(f"Mencari konteks untuk: \"{user_message}\"")
+        # --- 2. (RAG) - Perform RAG (Same as before) ---
+        print(f"Searching for context for: \"{user_message}\"")
         query_embedding = embedding_model.encode(user_message).tolist()
         results = knowledge_collection.query(
             query_embeddings=[query_embedding],
-            n_results=1 # <-- Anda bisa ganti ini ke 1 nanti
+            n_results=1 
         )
         context = "\n\n".join(results['documents'][0])
         print("Konteks ditemukan.")
         
-        # --- 3. (RAG) Buat prompt ---
-        # <-- Anda bisa perketat prompt ini nanti
+        # --- 3. (RAG) For prompt ---
         system_prompt = """You are a precise assistant. Answer *strictly* and *only* based on the context provided. 
                         Do not add any information, pollutants, or applications that are not *explicitly* mentioned in the text. 
                         If the context provides conflicting information (like for different products), only use the information from the *single most relevant* chunk."""
@@ -153,15 +152,15 @@ def handle_chat():
             {"role": "user", "content": user_prompt}
         ]
         
-        # --- 4. (RAG) Panggil API Llama 3 ---
-        print("Memanggil Hugging Face API...")
+        # --- 4. (RAG) Call the Llama 3 API ---
+        print("Calling Hugging Face API...")
         response = hf_client.chat_completion(messages=messages, max_tokens=250, temperature=0.1)
         ai_response = response.choices[0].message.content
         
-        # --- 5. (CRUD) Simpan balasan AI ke MongoDB ---
+        # --- 5. (CRUD) Save the AI response to MongoDB ---
         ai_message_doc = {"role": "assistant", "content": ai_response, "timestamp": datetime.now()}
         
-        if conversation_id: # Obrolan lama
+        if conversation_id: # Existing chat
             chat_history_collection.update_one(
                 {"_id": ObjectId(conversation_id)},
                 {
@@ -169,27 +168,27 @@ def handle_chat():
                     "$set": {"updatedAt": datetime.now()}
                 }
             )
-        else: # Obrolan baru
+        else: # New chat
             title = user_message[:30] + "..." if len(user_message) > 30 else user_message
             new_convo_doc = {
                 "userId": user_id,
                 "title": title,
-                "messages": [user_message_doc, ai_message_doc], # Langsung tambahkan user & AI
+                "messages": [user_message_doc, ai_message_doc], # Directly append user & AI
                 "createdAt": datetime.now(),
                 "updatedAt": datetime.now()
             }
             insert_result = chat_history_collection.insert_one(new_convo_doc)
-            conversation_id = insert_result.inserted_id # Ambil _id baru
+            conversation_id = insert_result.inserted_id # Get the new _id
             
-        print("Percakapan berhasil disimpan ke MongoDB.")
+        print("Conversation successfully saved to MongoDB.")
 
-        # --- 6. Kirim balasan ---
+        # --- 6. Send the response ---
         return jsonify({"answer": ai_response, "conversationId": str(conversation_id)})
 
     except Exception as e:
         print(f"Error di /api/chat: {e}")
-        return jsonify({"error": "Terjadi kesalahan di server"}), 500
+        return jsonify({"error": "Server error occurred"}), 500
 
-# --- 7. Jalankan Server ---
+# --- 7. Run the Server ---
 if __name__ == "__main__":
-    app.run(port=3001, debug=True)
+    app.run(port=5000, debug=True)

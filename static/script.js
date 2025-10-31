@@ -1,20 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // === 1. MENANGKAP ELEMEN DOM ===
+    // === 1. CATCHING DOM ELEMENTS ===
     const sendButton = document.getElementById("send-button");
     const chatInput = document.getElementById("chat-input");
     const historyList = document.getElementById("history-list");
     const chatLog = document.getElementById("chat-log-area");
     const newChatButton = document.querySelector(".new-chat-btn");
-    const clearAllButton = document.querySelector(".clear-all"); // <-- TAMBAHAN BARU
+    const clearAllButton = document.querySelector(".clear-all"); 
 
     const emptyChatPlaceholder = `
         <div class="empty-chat-placeholder">
             <i class="fa-solid fa-robot"></i>
-            <h2>Hello Name</h2>
+            <h2>Hello! I am your Enviro-Edu Assistant. How may I assist you today?</h2>
         </div>
     `;
 
-    // === 2. DATA UTAMA APLIKASI (STATE) ===
+    // === 2. APPLICATION MAIN DATA (STATE) ===
     let conversations = {};
     let currentConversationId = null;
     let currentUserId = getOrCreateUserId();
@@ -39,46 +39,46 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     
-    // <-- LISTENER BARU UNTUK "CLEAR ALL" ---
+    // <-- NEW LISTENER FOR “CLEAR ALL” ---
     clearAllButton.addEventListener("click", (e) => {
         e.preventDefault();
         clearAllConversations();
     });
 
-    // === 4. FUNGSI-FUNGSI UTAMA ===
+    // === 4. MAIN FUNCTIONS ===
 
     /**
-     * FUNGSI BARU: Menghapus semua percakapan
+     * NEW FEATURE: Delete all conversations
      */
     async function clearAllConversations() {
-        if (!confirm("Apakah Anda yakin ingin menghapus semua percakapan? Tindakan ini tidak bisa dibatalkan.")) {
+        if (!confirm("Are you sure you want to delete all conversations? This action cannot be undone.")) {
             return;
         }
 
         try {
-            const response = await fetch("http://localhost:3001/api/conversations", {
+            const response = await fetch("http://localhost:5000/api/conversations", {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId: currentUserId }) // Kirim userId untuk dihapus
+                body: JSON.stringify({ userId: currentUserId }) // Send userID to be deleted
             });
 
             if (!response.ok) {
-                throw new Error("Gagal menghapus history di server.");
+                throw new Error("Failed to delete history on the server.");
             }
             
-            // Jika server berhasil, bersihkan state frontend
+            // If the server is successful, clear the frontend state
             conversations = {};
-            startNewChat(); // Ini akan membersihkan UI (merender history & chat log)
+            startNewChat(); // This will clear the UI (render history & chat log).
             
-            console.log("Semua percakapan berhasil dihapus.");
+            console.log("All conversations have been successfully deleted.");
 
         } catch (error) {
             console.error("Error clearing conversations:", error);
-            alert("Terjadi kesalahan saat menghapus history.");
+            alert("An error occurred while deleting history.");
         }
     }
     
-    // ... (Fungsi getOrCreateUserId, startNewChat, sendMessage, dll. tetap sama persis) ...
+    // ... (The functions getOrCreateUserId, startNewChat, sendMessage, etc. remain exactly the same) ...
     
     function getOrCreateUserId() {
         let userId = localStorage.getItem('anonymousUserId');
@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
         chatLog.scrollTop = chatLog.scrollHeight;
         
         try {
-            const response = await fetch("http://localhost:3001/api/chat", {
+            const response = await fetch("http://localhost:5000/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error("Error sending message:", error);
             const p = loadingDiv.querySelector(".message-content p");
-            p.textContent = "Maaf, terjadi kesalahan. Coba lagi.";
+            p.textContent = "Sorry, an error occurred. Please try again.";
         }
         
         chatLog.scrollTop = chatLog.scrollHeight;
@@ -229,13 +229,13 @@ document.addEventListener("DOMContentLoaded", () => {
         return messageDiv;
     }
 
-    // --- Inisialisasi Aplikasi ---
+    // --- Application Initialization ---
     async function initializeApp() {
         if (!currentUserId) return;
         try {
-            const response = await fetch(`http://localhost:3001/api/conversations?userId=${currentUserId}`);
+            const response = await fetch(`http://localhost:5000/api/conversations?userId=${currentUserId}`);
             if (!response.ok) {
-                throw new Error("Gagal memuat history");
+                throw new Error("Failed to load history");
             }
             const data = await response.json(); 
             conversations = {};

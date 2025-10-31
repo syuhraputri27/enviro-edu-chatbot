@@ -3,57 +3,56 @@ from sentence_transformers import SentenceTransformer
 from chromadb import HttpClient
 import sys
 
-# --- 1. Inisialisasi Klien & Model ---
-print("Menghubungkan ke ChromaDB di localhost:8000...")
+# --- 1. Initialize Client & Model ---
+print("Connecting to ChromaDB at localhost:8000...")
 try:
-    # Kita terhubung ke server yang sama dengan app.py
+    # We connect to the same server as app.py
     client = HttpClient(host='localhost', port=8000)
     collection = client.get_or_create_collection(name="website_knowledge")
-    print("✅ Berhasil terhubung ke ChromaDB.")
+    print("✅ Successfully connected to ChromaDB.")
 except Exception as e:
-    print(f"❌ GAGAL terhubung ke ChromaDB. Pastikan server ChromaDB berjalan.")
+    print("❌ FAILED to connect to ChromaDB. Ensure the ChromaDB server is running.")
     print(f"Error: {e}")
     sys.exit(1)
 
-print("Memuat model embedding 'all-MiniLM-L6-v2' (ini mungkin butuh waktu)...")
+print("Loading 'all-MiniLM-L6-v2' embedding model (this might take a moment)...")
 model = SentenceTransformer('all-MiniLM-L6-v2')
-print("✅ Model embedding berhasil dimuat.")
+print("✅ Embedding model successfully loaded.")
 
-# --- 2. Baca File CSV ---
-file_path = "knowledge_base_FINAL_COMBINED.csv" # Pastikan nama file ini benar
+# --- 2. Read CSV File ---
+file_path = "knowledge_base_FINAL_COMBINED.csv"  # Ensure this file name is correct
 try:
     df = pd.read_csv(file_path)
     df = df.fillna('')
-    print(f"✅ Berhasil memuat {len(df)} chunk dari {file_path}.")
+    print(f"✅ Successfully loaded {len(df)} chunks from {file_path}.")
 except FileNotFoundError:
-    print(f"❌ Error: File {file_path} tidak ditemukan.")
+    print(f"❌ Error: File {file_path} not found.")
     sys.exit(1)
 
-# --- 3. Siapkan Data ---
+# --- 3. Prepare Data ---
 documents = df['chunk_text'].tolist()
 metadatas = df[['main_topic', 'chunk_title', 'src_url']].to_dict('records')
 ids = df['chunk_id'].tolist()
 
-# --- 4. BUAT EMBEDDING (Bagian Paling Penting) ---
-# app.py membuat embedding 'on-the-fly' untuk 1 pertanyaan
-# Script ini membuat embedding untuk SEMUA dokumen sekaligus
-print(f"Memulai proses embedding untuk {len(documents)} dokumen...")
+# --- 4. CREATE EMBEDDINGS (The Most Important Part) ---
+# app.py creates embeddings 'on-the-fly' for 1 question
+# This script creates embeddings for ALL documents at once
+print(f"Starting embedding process for {len(documents)} documents...")
 embeddings = model.encode(documents, show_progress_bar=True)
-print("✅ Embedding selesai.")
+print("✅ Embeddings complete.")
 
-# --- 5. Tambahkan ke ChromaDB ---
-# Hapus data lama (jika ada) agar tidak duplikat
+# --- 5. Add to ChromaDB ---
+# Delete old data (if any) to prevent duplication
 try:
     collection.delete(ids=ids)
-    print("Data lama di collection berhasil dihapus.")
+    print("Old data in the collection successfully deleted.")
 except Exception as e:
-    print("Tidak ada data lama untuk dihapus, melanjutkan...")
+    print("No old data to delete, continuing...")
 
-print("Menambahkan data baru ke ChromaDB (dalam batch)...")
+print("Adding new data to ChromaDB (in batches)...")
 batch_size = 100
 for i in range(0, len(ids), batch_size):
-    print(f"  Menambahkan batch {i//batch_size + 1}...")
-    
+    print(f"  Adding batch {i//batch_size + 1}...")
     collection.add(
         embeddings=embeddings[i:i+batch_size].tolist(),
         documents=documents[i:i+batch_size],
@@ -61,4 +60,4 @@ for i in range(0, len(ids), batch_size):
         ids=ids[i:i+batch_size]
     )
 
-print(f"🎉 SEMUA SELESAI! {collection.count()} dokumen berhasil disimpan di ChromaDB.")
+print(f"🎉 ALL DONE! {collection.count()} documents successfully stored in ChromaDB.")

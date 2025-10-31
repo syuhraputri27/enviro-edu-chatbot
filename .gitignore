@@ -2,7 +2,9 @@
 venv/
 
 # Database ChromaDB lokal (wajib)
+chroma/
 my_chroma_db/
+.chroma/
 
 # File rahasia API keys (wajib)
 .env

@@ -1,31 +1,31 @@
-/* Reset CSS dasar */
+/* Reset basic CSS */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* 1. STYLE BODY UNIVERSAL (Dasar) */
+/* 1. UNIVERSAL BODY STYLE (Basic) */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: #f7f7f8;
     color: #1f2328;
     /* display: flex; */
     /* height: 100vh; */
-    /* overflow: hidden; Mencegah body scroll */
+    /* overflow: hidden; Preventing body scroll */
 }
 
-/* 2. STYLE BODY KHUSUS UNTUK CHAT PAGE */
-/* Selektor ini memastikan style hanya berlaku jika body BUKAN landing-page */
+/* 2. SPECIAL BODY STYLE FOR CHAT PAGE */
+/* This selector ensures that the style only applies if the body is NOT a landing page */
 body:not(.landing-page) { 
     display: flex;
     height: 100vh;
-    overflow: hidden; /* Mencegah body scroll */
+    overflow: hidden; /* Preventing body scroll */
 }
 
-/* --- 3. STYLE UNTUK LANDING PAGE (index.html) --- */
+/* --- 3. STYLE FOR LANDING PAGE (index.html) --- */
 
-.landing-page { /* Menggunakan class yang ditambahkan di index.html */
+.landing-page { /* Using the class added in index.html */
     display: flex;
     align-items: center; 
     justify-content: center; 
@@ -55,10 +55,10 @@ body:not(.landing-page) {
     font-size: 1.1em;
     font-weight: bold;
     border-radius: 8px;
-    /* Tambahkan hover atau style lain yang Anda suka */
+    /* Add hover or other styles if needed */
 }
 
-/* --- 1. Sidebar (Kiri) --- */
+/* --- 1. Sidebar (Left) --- */
 .sidebar {
     width: 260px;
     background-color: #ffffff;
@@ -78,7 +78,7 @@ body:not(.landing-page) {
 .new-chat-btn {
     flex-grow: 1;
     padding: 12px;
-    background-color: #4a4aef; /* Biru seperti di gambar */
+    background-color: #4a4aef; 
     color: white;
     border: none;
     border-radius: 8px;
@@ -86,7 +86,7 @@ body:not(.landing-page) {
     font-weight: 500;
     cursor: pointer;
     text-align: left;
-    text-decoration: none; /* Ditambahkan agar link tidak ada garis bawah */
+    text-decoration: none; /* Added so that the link is not underlined */
 }
 
 .new-chat-btn i {
@@ -102,8 +102,8 @@ body:not(.landing-page) {
 }
 
 .chat-history {
-    flex-grow: 1; /* Membuat history mengisi ruang tersisa */
-    overflow-y: auto; /* Scroll jika history penuh */
+    flex-grow: 1; /* Filling the remaining space with history */
+    overflow-y: auto; /* Scroll if history is full */
 }
 
 .history-header {
@@ -182,9 +182,9 @@ body:not(.landing-page) {
     background-color: #ddd;
 }
 
-/* --- 2. Chat Area (Kanan) --- */
+/* --- 2. Chat Area (Right) --- */
 .chat-area {
-    flex-grow: 1; /* Mengisi sisa ruang */
+    flex-grow: 1; /* Filling the remaining space */
     display: flex;
     flex-direction: column;
     background-color: #ffffff;
@@ -196,21 +196,21 @@ body:not(.landing-page) {
     border-bottom: 1px solid #e0e0e0;
     font-size: 1.1em;
     font-weight: 600;
-    flex-shrink: 0; /* Mencegah header mengecil */
+    flex-shrink: 0; /* Preventing headers from shrinking */
 }
 
 .chat-log {
-    flex-grow: 1; /* Mengisi ruang tengah */
-    overflow-y: auto; /* Ini adalah area chat yang bisa di-scroll */
+    flex-grow: 1; /* Filling the center space */
+    overflow-y: auto; /* This is a scrollable chat area. */
     padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Jarak antar pesan NANTINYA */
+    gap: 20px; /* Distance between messages */
 }
 
-/* --- STYLE UNTUK EMPTY STATE --- */
+/* --- STYLE FOR EMPTY STATE --- */
 .empty-chat-placeholder {
-    flex-grow: 1; /* Memastikan placeholder mengisi ruang chat-log */
+    flex-grow: 1; /* Ensuring placeholders fill the chat log space */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -232,11 +232,11 @@ body:not(.landing-page) {
 /* ------------------------------- */
 
 
-/* Styling untuk setiap pesan (Disimpan untuk nanti saat Anda tambahkan chat) */
+/* Styling for each message (Saved for later when you add a chat) */
 .chat-message {
     display: flex;
     gap: 16px;
-    max-width: 90%; /* Agar tidak terlalu lebar */
+    max-width: 90%; /* So that it is not too wide */
 }
 
 .chat-message .avatar {
@@ -263,7 +263,7 @@ body:not(.landing-page) {
     padding-top: 8px;
 }
 
-.message-content strong { /* Untuk nama "CHAT A.I+" */
+.message-content strong { /* For title Enviro Education Tools Chatbot */
     display: block;
     margin-bottom: 4px;
     font-size: 1.05em;
@@ -275,7 +275,7 @@ body:not(.landing-page) {
 }
 
 .message-content ol {
-    padding-left: 20px; /* Indentasi untuk ordered list */
+    padding-left: 20px; /* Indentation for ordered lists */
     margin-top: 10px;
 }
 
@@ -283,24 +283,24 @@ body:not(.landing-page) {
     margin-bottom: 8px;
 }
 
-/* Area Input di Bawah */
+/* Input Area Below */
 .chat-input-area {
     padding: 24px;
     border-top: 1px solid #e0e0e0;
     background-color: #fff;
-    flex-shrink: 0; /* Mencegah input area mengecil */
+    flex-shrink: 0; /* Preventing the input area from shrinking */
 }
 
 .input-wrapper {
     display: flex;
     position: relative;
-    max-width: 900px; /* Batasi lebar input */
-    margin: 0 auto; /* tengahkan */
+    max-width: 900px; /* Limit input width */
+    margin: 0 auto;
 }
 
 .chat-input-area input {
     flex-grow: 1;
-    padding: 16px 50px 16px 20px; /* Beri ruang untuk tombol send */
+    padding: 16px 50px 16px 20px; /* Make space for the send button */
     border: 1px solid #ccc;
     border-radius: 8px;
     font-size: 1em;
@@ -322,7 +322,7 @@ body:not(.landing-page) {
     border: none;
     width: 40px;
     height: 40px;
-    border-radius: 50%; /* Buat jadi lingkaran */
+    border-radius: 50%; /* Make a circle */
     font-size: 1.1em;
     cursor: pointer;
     display: flex;
@@ -330,11 +330,11 @@ body:not(.landing-page) {
     justify-content: center;
 }
 
-/* Tab "Upgrade" di sisi kanan */
+/* The “Upgrade” tab on the right side */
 .upgrade-tab {
     position: fixed;
     top: 50%;
-    right: -60px; /* Atur posisi agar sedikit keluar */
+    right: -60px; /* Adjust the position so that it sticks out slightly. */
     transform: translateY(-50%) rotate(-90deg);
     background-color: #4a4aef;
     color: white;
