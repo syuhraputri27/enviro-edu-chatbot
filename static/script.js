@@ -215,8 +215,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const messageDiv = document.createElement("div");
         messageDiv.classList.add("chat-message", role);
 
-        let avatar = role === "user" ? "AN" : '<i class="fa-solid fa-robot"></i>';
-        let name = role === "user" ? "" : "<strong>CHAT A.I+</strong>";
+        let avatar = role === "user" ? "User" : '<i class="fa-solid fa-robot"></i>';
+        let name = role === "user" ? "" : "<strong>Enviro Bot</strong>";
 
         messageDiv.innerHTML = `
             <div class="avatar">${avatar}</div>
