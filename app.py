@@ -42,8 +42,18 @@ except Exception as e:
     print(f"❌ GAGAL terhubung ke ChromaDB. Pastikan server chroma run... berjalan. Error: {e}")
 
 # --- 3. Endpoint Frontend ---
+# @app.route("/")
+# def home():
+#     return render_template("chat.html")
+
 @app.route("/")
 def home():
+    """Sajikan landing page (index.html)"""
+    return render_template("index.html")
+
+@app.route("/chat")
+def chat_page():
+    """Sajikan halaman chat utama (chat.html)"""
     return render_template("chat.html")
 
 # --- 4. Endpoint API - Ambil SEMUA History (untuk F5) ---

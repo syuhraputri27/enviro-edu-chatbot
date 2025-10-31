@@ -5,13 +5,57 @@
     box-sizing: border-box;
 }
 
+/* 1. STYLE BODY UNIVERSAL (Dasar) */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: #f7f7f8;
     color: #1f2328;
+    /* display: flex; */
+    /* height: 100vh; */
+    /* overflow: hidden; Mencegah body scroll */
+}
+
+/* 2. STYLE BODY KHUSUS UNTUK CHAT PAGE */
+/* Selektor ini memastikan style hanya berlaku jika body BUKAN landing-page */
+body:not(.landing-page) { 
     display: flex;
     height: 100vh;
     overflow: hidden; /* Mencegah body scroll */
+}
+
+/* --- 3. STYLE UNTUK LANDING PAGE (index.html) --- */
+
+.landing-page { /* Menggunakan class yang ditambahkan di index.html */
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+    text-align: center; 
+    height: 100vh;
+}
+
+.landing-container { 
+    max-width: 600px; 
+    padding: 20px; 
+}
+.landing-container h1 { 
+    font-size: 2.5em; 
+    margin-bottom: 20px; 
+}
+.landing-container p { 
+    font-size: 1.2em; 
+    margin-bottom: 30px; 
+    color: #555; 
+}
+.start-chat-btn {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: #4a4aef;
+    color: white;
+    text-decoration: none;
+    font-size: 1.1em;
+    font-weight: bold;
+    border-radius: 8px;
+    /* Tambahkan hover atau style lain yang Anda suka */
 }
 
 /* --- 1. Sidebar (Kiri) --- */
