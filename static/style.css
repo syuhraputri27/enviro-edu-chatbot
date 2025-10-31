@@ -33,6 +33,16 @@ body:not(.landing-page) {
     height: 100vh;
 }
 
+/* --- Style untuk Landing Page (index.html) --- */
+body.landing-page {
+    background-color: #f0f2f5; /* Warna abu-abu yang bersih */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: auto; /* Mengganti overflow:hidden dari body utama */
+}
+
 .landing-container { 
     max-width: 600px; 
     padding: 20px; 

@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from pymongo import MongoClient, ReturnDocument
 from pymongo.errors import PyMongoError
-from chromadb import HttpClient
+import chromadb # <-- MENGGANTIKAN HttpClient
 from sentence_transformers import SentenceTransformer
 from huggingface_hub import InferenceClient
 from dotenv import load_dotenv
@@ -32,14 +32,33 @@ print("Loading embedding model (this may take a while)...")
 embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 print("✅ Embedding model ('all-MiniLM-L6-v2') has been successfully loaded.")
 
+# --- KODE BARU UNTUK KONEKSI HOSTING (CloudClient) ---
 try:
-    chroma_client = HttpClient(host='localhost', port=8000)
-    knowledge_collection = chroma_client.get_collection(
-        name="website_knowledge"
+    # 1. Ambil kredensial Cloud Anda dari .env
+    CHROMA_API_KEY = os.getenv("CHROMA_API_KEY")
+    CHROMA_TENANT = os.getenv("CHROMA_TENANT")
+    CHROMA_DATABASE = os.getenv("CHROMA_DATABASE")
+
+    if not CHROMA_API_KEY or not CHROMA_TENANT or not CHROMA_DATABASE:
+        raise ValueError("CHROMA_API_KEY, CHROMA_TENANT, or CHROMA_DATABASE missing from .env file")
+
+    # 2. Gunakan chromadb.CloudClient
+    chroma_client = chromadb.CloudClient(
+        tenant=CHROMA_TENANT,
+        database=CHROMA_DATABASE,
+        api_key=CHROMA_API_KEY
     )
-    print("✅ Successfully connected to ChromaDB (localhost:8000).")
+    
+    # 3. Ambil collection (data Anda sudah ada di sana dari 'chroma copy')
+    knowledge_collection = chroma_client.get_collection(
+        name="website_knowledge" 
+    )
+    print(f"✅ Successfully connected to ChromaDB Cloud (Tenant: {CHROMA_TENANT}).")
+    print(f"✅ Found {knowledge_collection.count()} documents in 'website_knowledge' collection.")
+
 except Exception as e:
-    print(f"❌ FAILED to connect to ChromaDB. Make sure the 'chroma run...' server is running. Error: {e}")
+    print(f"❌ FAILED to connect to ChromaDB Cloud. Check your .env variables. Error: {e}")
+# --- AKHIR DARI KODE BARU ---
 
 # --- 3. Frontend Endpoints ---
 @app.route("/")
@@ -137,14 +156,23 @@ def handle_chat():
         # --- 2. (RAG) - Perform RAG ---
         print(f"Searching for context for: \"{user_message}\"")
         query_embedding = embedding_model.encode(user_message).tolist()
+        
+        # Catatan: n_results=5 dapat menyebabkan kontaminasi konteks.
+        # Pertimbangkan untuk mengganti ke 1 jika jawaban tidak akurat.
         results = knowledge_collection.query(
             query_embeddings=[query_embedding],
             n_results=5 
         )
-        context = "\n\n".join(results['documents'][0])
-        print("Context found.")
+
+        # Tambahkan pemeriksaan jika 'results' kosong
+        if not results['documents'] or not results['documents'][0]:
+             context = "No relevant context found."
+             print("Context not found.")
+        else:
+             context = "\n\n".join(results['documents'][0])
+             print("Context found.")
         
-        # --- 3. (RAG) Build Prompt (Using new instructions) ---
+        # --- 3. (RAG) Build Prompt (Per New Instructions) ---
         system_prompt = """You are the 'Enviro Education Tools Product Selector & System Designer'. Your answers are for technical professionals who use American English.
 
 Your task is to answer the user's question *strictly* and *only* based on the context provided. The context provided IS the information from https://enviroeducationtools.com/.
